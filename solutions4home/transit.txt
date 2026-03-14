@@ -1,0 +1,70 @@
+<runtime>
+  <assemblyBinding xmlns="urn:schemas-microsoft-com:asm.v1">
+
+    <!-- Force 5.x to redirect up to 6.21.0 -->
+    <dependentAssembly>
+      <assemblyIdentity name="Microsoft.IdentityModel.Tokens"
+                        publicKeyToken="31bf3856ad364e35"
+                        culture="neutral" />
+      <bindingRedirect oldVersion="0.0.0.0-6.21.0.0"
+                       newVersion="6.21.0.0" />
+    </dependentAssembly>
+
+    <dependentAssembly>
+      <assemblyIdentity name="Microsoft.IdentityModel.Protocols"
+                        publicKeyToken="31bf3856ad364e35"
+                        culture="neutral" />
+      <bindingRedirect oldVersion="0.0.0.0-6.21.0.0"
+                       newVersion="6.21.0.0" />
+    </dependentAssembly>
+
+    <dependentAssembly>
+      <assemblyIdentity name="Microsoft.IdentityModel.Protocols.OpenIdConnect"
+                        publicKeyToken="31bf3856ad364e35"
+                        culture="neutral" />
+      <bindingRedirect oldVersion="0.0.0.0-6.21.0.0"
+                       newVersion="6.21.0.0" />
+    </dependentAssembly>
+
+    <dependentAssembly>
+      <assemblyIdentity name="Microsoft.IdentityModel.Logging"
+                        publicKeyToken="31bf3856ad364e35"
+                        culture="neutral" />
+      <bindingRedirect oldVersion="0.0.0.0-6.21.0.0"
+                       newVersion="6.21.0.0" />
+    </dependentAssembly>
+
+    <dependentAssembly>
+      <assemblyIdentity name="System.IdentityModel.Tokens.Jwt"
+                        publicKeyToken="31bf3856ad364e35"
+                        culture="neutral" />
+      <bindingRedirect oldVersion="0.0.0.0-6.21.0.0"
+                       newVersion="6.21.0.0" />
+    </dependentAssembly>
+
+  </assemblyBinding>
+</runtime>
+```
+
+---
+
+## If it still loads 5.3.0 — find and remove the culprit
+
+The old ADFS packages that typically drag in 5.3.0 are:
+```
+Microsoft.Owin.Security.WsFederation   ← likely culprit
+System.IdentityModel                    ← old WIF
+Microsoft.IdentityModel (old 1.x)       ← old WIF
+```
+
+Remove them if you no longer need ADFS:
+```
+PM> Uninstall-Package Microsoft.Owin.Security.WsFederation -RemoveDependencies
+PM> Uninstall-Package Microsoft.IdentityModel -RemoveDependencies
+```
+
+---
+
+## Quickest one-shot fix
+```
+PM> Add-BindingRedirect
